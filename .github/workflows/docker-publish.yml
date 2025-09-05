@@ -8,9 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Docker image tag (e.g. 1.0.0, latest)'
-        required: false
-        default: 'latest'
+        description: 'Docker image tag (format: vx.y.z, e.g. v1.2.3)'
+        required: true
 
 jobs:
   build-and-push:
@@ -49,10 +48,18 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract vx.y tag
+        id: version
+        run: |
+          short_tag=$(echo "${{ github.event.inputs.tag }}" | grep -oE '^v[0-9]+\.[0-9]+')
+          echo "short_tag=$short_tag" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image for ${{ matrix.platform }}
         uses: docker/build-push-action@v5
         with:
           context: build-context
           push: true
           platforms: ${{ matrix.platform }}
-          tags: bajotumn/meshsense:${{ github.event.inputs.tag || 'latest' }}
+          tags: |
+            bajotumn/meshsense:${{ github.event.inputs.tag }}
+            bajotumn/meshsense:${{ steps.version.outputs.short_tag }}
