@@ -1,16 +1,3 @@
-FROM ubuntu:jammy AS build
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-RUN curl -sSL https://affirmatech.com/download/meshsense/meshsense-x86_64.AppImage -o meshsense.AppImage && \
-    chmod +x meshsense.AppImage && \
-    ./meshsense.AppImage --appimage-extract && \
-    mv squashfs-root /meshsense
-
 FROM ubuntu:jammy
 VOLUME [ "/root/.local/share/meshsense" ]
 LABEL maintainer="bajotumn@gmail.com"
@@ -19,7 +6,7 @@ LABEL description="Docker image for running MeshSense"
 ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
-COPY --from=build /meshsense /app
+COPY meshsense /app
 RUN apt-get update && apt-get install -y \
     libnss3 \
     libasound2 \
