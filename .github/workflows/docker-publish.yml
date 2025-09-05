@@ -19,17 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, arm64, armv7l]
+        arch: [amd64]
         include:
           - arch: amd64
             platform: linux/amd64
             appimage_url: https://affirmatech.com/download/meshsense/meshsense-x86_64.AppImage
-          - arch: arm64
-            platform: linux/arm64
-            appimage_url: https://affirmatech.com/download/meshsense/meshsense-beta-arm64.AppImage
-          - arch: armv7l
-            platform: linux/arm/v7
-            appimage_url: https://affirmatech.com/download/meshsense/meshsense-beta-armv7l.AppImage
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
